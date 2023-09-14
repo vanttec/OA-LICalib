@@ -62,6 +62,15 @@ struct PointXYZIR8Y {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // ensure proper alignment
 } EIGEN_ALIGN16;
 
+// Hesai XT32
+struct PointXYZIT {
+    PCL_ADD_POINT4D
+    float intensity;
+    double timestamp;
+    uint16_t ring;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} EIGEN_ALIGN16;
+
 POINT_CLOUD_REGISTER_POINT_STRUCT(velodyne_pcl::PointXYZIRT,     //
                                   (float, x, x)                  //
                                   (float, y, y)                  //
@@ -86,6 +95,14 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(PointXYZIR8Y,                  //
                                   (uint32_t, t, t)               //
 )
 
+POINT_CLOUD_REGISTER_POINT_STRUCT(PointXYZIT,
+                                  (float, x, x)
+                                  (float, y, y)
+                                  (float, z, z)
+                                  (float, intensity, intensity)
+                                  (double, timestamp, timestamp)
+                                  (uint16_t, ring, ring))
+
 typedef velodyne_pcl::PointXYZIRT RTPoint;
 typedef pcl::PointCloud<RTPoint> RTPointCloud;
 
@@ -97,3 +114,6 @@ typedef pcl::PointCloud<OusterPoint> OusterPointCloud;
 
 typedef pcl::PointXYZRGB ColorPoint;
 typedef pcl::PointCloud<ColorPoint> ColorPointCloud;
+
+typedef PointXYZIT HesaiPoint;
+typedef pcl::PointCloud<HesaiPoint> HesaiPointCloud;

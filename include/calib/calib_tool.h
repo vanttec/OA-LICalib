@@ -169,6 +169,7 @@ inline void GetLidarOdometry(
   bool update_map = true;
   double last_scan_time = 0;
   for (const double& scan_time : scan_timestamps) {
+      std::cout << "scan_time: " << scan_time << std::endl;
     if (scan4map_time > 0 && scan_time > scan4map_time) update_map = false;
     auto iter = undistort_scan_data.find(scan_time);
     if (iter != undistort_scan_data.end()) {
@@ -215,27 +216,28 @@ inline bool EstimateRotation(const Eigen::aligned_vector<IMUData>& imu_data,
   LidarNdtOdometry lidar_odom(calib_param->lo_param.ndt_resolution,
                               calib_param->lo_param.ndt_key_frame_downsample);
 
-  InertialInitializer rot_initer;
-  for (auto const& scan_raw : scan_data) {
-    lidar_odom.FeedScan(scan_raw);
-    if (lidar_odom.get_odom_data().size() < 20 ||
-        (lidar_odom.get_odom_data().size() % 5 != 0))
-      continue;
-
-    bool ret;
-    ret = rot_initer.EstimateRotation(trajectory, lidar_odom.get_odom_data());
-
-    if (ret) {
-      Eigen::Quaterniond qItoL = rot_initer.getQ_ItoS();
-      calib_param->so3_LtoI.setQuaternion(qItoL.conjugate());
-      calib_param->UpdateExtrinicParam();
-      Eigen::Vector3d euler_ItoL =
-          qItoL.toRotationMatrix().eulerAngles(0, 1, 2);
-      std::cout << "[Initialization] Done. Euler_ItoL initial degree: "
-                << (euler_ItoL * 180.0 / M_PI).transpose() << std::endl;
-      return true;
-    }
-  }
+//  InertialInitializer rot_initer;
+//  for (auto const& scan_raw : scan_data) {
+//      std::cout << "scan_raw.timestamp: " << scan_raw.timestamp << std::endl;
+//    lidar_odom.FeedScan(scan_raw);
+//    if (lidar_odom.get_odom_data().size() < 20 ||
+//        (lidar_odom.get_odom_data().size() % 5 != 0))
+//      continue;
+//
+//    bool ret;
+//    ret = rot_initer.EstimateRotation(trajectory, lidar_odom.get_odom_data());
+//
+//    if (ret) {
+//      Eigen::Quaterniond qItoL = rot_initer.getQ_ItoS();
+//      calib_param->so3_LtoI.setQuaternion(qItoL.conjugate());
+//      calib_param->UpdateExtrinicParam();
+//      Eigen::Vector3d euler_ItoL =
+//          qItoL.toRotationMatrix().eulerAngles(0, 1, 2);
+//      std::cout << "[Initialization] Done. Euler_ItoL initial degree: "
+//                << (euler_ItoL * 180.0 / M_PI).transpose() << std::endl;
+//      return true;
+//    }
+//  }
 
   return false;
 }
@@ -274,11 +276,11 @@ inline pclomp::NormalDistributionsTransform<PosPoint, PosPoint>::Ptr GetNDtPtr(
   auto ndt_omp = pclomp::NormalDistributionsTransform<PosPoint, PosPoint>::Ptr(
       new pclomp::NormalDistributionsTransform<PosPoint, PosPoint>());
   ndt_omp->setResolution(ndt_resolution);
-  ndt_omp->setNumThreads(4);
+  ndt_omp->setNumThreads(12);
   ndt_omp->setNeighborhoodSearchMethod(pclomp::DIRECT7);
   ndt_omp->setTransformationEpsilon(1e-3);
   ndt_omp->setStepSize(0.01);
-  ndt_omp->setMaximumIterations(50);
+  ndt_omp->setMaximumIterations(600);
 
   ndt_omp->setInputTarget(map_cloud);
 

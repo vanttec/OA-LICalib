@@ -94,6 +94,8 @@ void LICalibrHelper::LoadDataset(const YAML::Node& node) {
     lidar_model_type = LidarModelType::VLP_16_points;
   } else if (lidar_model == "VLP_32E_points") {
     lidar_model_type = LidarModelType::VLP_32E_points;
+  } else if (lidar_model == "VLS_128_points") {
+      lidar_model_type = LidarModelType::VLS_128_points;
   } else if (lidar_model == "Ouster_16_points") {
     lidar_model_type = LidarModelType::Ouster_16_points;
   } else if (lidar_model == "Ouster_32_points") {
@@ -102,6 +104,8 @@ void LICalibrHelper::LoadDataset(const YAML::Node& node) {
     lidar_model_type = LidarModelType::Ouster_64_points;
   } else if (lidar_model == "Ouster_128_points") {
     lidar_model_type = LidarModelType::Ouster_128_points;
+  } else if (lidar_model == "HESAI_XT32") {
+      lidar_model_type = LidarModelType::HESAI_XT32;
   } else if (lidar_model == "RS_16") {
     lidar_model_type = LidarModelType::RS_16;
   } else {

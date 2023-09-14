@@ -14,6 +14,7 @@ RUN apt-get install -y curl
 RUN apt-get install -y git
 RUN apt-get install -y wget
 RUN apt-get install -y gpg
+RUN apt-get install -y gdb
 RUN apt-get install -y ca-certificates
 RUN apt-get install -y python-wstool
 
@@ -35,6 +36,7 @@ RUN apt-get install -y ros-melodic-tf-conversions
 RUN apt-get install -y ros-melodic-angles
 RUN apt-get install -y ros-melodic-diagnostic-updater
 RUN apt-get install -y ros-melodic-cv-bridge
+RUN apt-get install -y ros-melodic-rviz
 
 # Prepare OA-LICalib
 RUN bash -c "source /opt/ros/melodic/setup.bash && mkdir -p ~/catkin_oa_calib/src && cd ~/catkin_oa_calib/src && catkin_init_workspace"
@@ -70,3 +72,5 @@ RUN bash -c "source /opt/ros/melodic/setup.bash && catkin_make"
 
 RUN bash -c "echo 'source /opt/ros/melodic/setup.bash' >> ~/.bashrc"
 RUN bash -c "echo 'alias sors=\"source devel/setup.bash\"' >> ~/.bashrc"
+
+WORKDIR /root

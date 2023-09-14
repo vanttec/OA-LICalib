@@ -114,9 +114,9 @@ class CalibUI : public LICalibrHelper {
 
     for (size_t iter = 1; iter < iteration_num_; iter++) {
       if (iter > 1) {
-        this->calib_param_manager_->calib_option.opt_lidar_intrinsic = true;
-        this->calib_param_manager_->calib_option.opt_IMU_intrinsic = true;
-        this->calib_param_manager_->calib_option.opt_time_offset = true;
+        this->calib_param_manager_->calib_option.opt_lidar_intrinsic = false;
+        this->calib_param_manager_->calib_option.opt_IMU_intrinsic = false;
+        this->calib_param_manager_->calib_option.opt_time_offset = false;
       }
       timer.tic();
       this->Refinement();

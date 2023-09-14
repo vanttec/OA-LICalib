@@ -46,11 +46,11 @@ class NDTRegistration {
     ndt_omp_ = pclomp::NormalDistributionsTransform<PosPoint, PosPoint>::Ptr(
         new pclomp::NormalDistributionsTransform<PosPoint, PosPoint>());
     ndt_omp_->setResolution(ndt_resolution_);
-    ndt_omp_->setNumThreads(6);
+    ndt_omp_->setNumThreads(12);
     ndt_omp_->setNeighborhoodSearchMethod(pclomp::DIRECT7);
     ndt_omp_->setTransformationEpsilon(1e-3);
     ndt_omp_->setStepSize(0.01);
-    ndt_omp_->setMaximumIterations(50);
+    ndt_omp_->setMaximumIterations(600);
   }
 
   NDTRegistration(double ndt_resolution) {
@@ -60,11 +60,11 @@ class NDTRegistration {
     ndt_omp_ = pclomp::NormalDistributionsTransform<PosPoint, PosPoint>::Ptr(
         new pclomp::NormalDistributionsTransform<PosPoint, PosPoint>());
     ndt_omp_->setResolution(ndt_resolution_);
-    ndt_omp_->setNumThreads(6);
+    ndt_omp_->setNumThreads(12);
     ndt_omp_->setNeighborhoodSearchMethod(pclomp::DIRECT7);
     ndt_omp_->setTransformationEpsilon(1e-3);
     ndt_omp_->setStepSize(0.01);
-    ndt_omp_->setMaximumIterations(50);
+    ndt_omp_->setMaximumIterations(600);
   }
 
   bool SetInputTarget(const LiDARFeature& feature_map) {

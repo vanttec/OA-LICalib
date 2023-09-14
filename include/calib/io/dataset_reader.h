@@ -43,6 +43,7 @@
 #include <sensor_data/lidar_rs_16.h>
 #include <sensor_data/lidar_vlp_16.h>
 #include <sensor_data/lidar_vlp_points.h>
+#include <sensor_data/lidar_hesai.h>
 
 #include <utils/math_utils.h>
 #include <utils/eigen_utils.hpp>
@@ -109,6 +110,7 @@ class LioDataset {
     velodyne16_convert_ = nullptr;
     vlp_point_convert_ = nullptr;
     p_robosense_convert_ = nullptr;
+    hesai_convert_ = nullptr;
 
     if (lidar_model_ == VLP_16_packet || lidar_model_ == VLP_16_SIMU) {
       velodyne16_convert_ = std::make_shared<Velodyne16>();
@@ -118,7 +120,11 @@ class LioDataset {
       VelodyneType vlp_type = (lidar_model_ == VLP_16_points) ? VLP16 : VLP32E;
       vlp_point_convert_ = std::make_shared<VelodynePoints>(vlp_type);
       std::cout << "LiDAR model set as velodyne_points." << std::endl;
-    }  //
+    }
+    else if (lidar_model_ == VLS_128_points) {
+        vlp_point_convert_ = std::make_shared<VelodynePoints>(VLS128);
+        std::cout << "LiDAR model set as velodyne_points." << std::endl;
+    }
     else if (lidar_model_ == Ouster_16_points ||
              lidar_model_ == Ouster_32_points ||
              lidar_model_ == Ouster_64_points ||
@@ -136,7 +142,11 @@ class LioDataset {
       ouster_convert_ = std::make_shared<OusterLiDAR>(ring_no);
       lidar_model_ = LidarModelType::Ouster;
       std::cout << "LiDAR model set as Ouster " << int(ring_no) << " points.\n";
-    }  //
+    }
+    else if (lidar_model_ == HESAI_XT32) {
+        hesai_convert_ = std::make_shared<HesaiLiDAR>(HesaiRingNo::XT32);
+
+    }
     else if (lidar_model_ == RS_16) {
       p_robosense_convert_ = std::make_shared<RobosenseCorrection>(
           RobosenseCorrection::ModelType::RS_16);
@@ -211,13 +221,20 @@ class LioDataset {
           velodyne16_convert_->unpack_scan(scan_msg, lidar_feature);
         }  //
         else if (lidar_model_ == VLP_16_points ||
-                 lidar_model_ == VLP_32E_points) {
+                 lidar_model_ == VLP_32E_points || lidar_model_ == VLS_128_points) {
           sensor_msgs::PointCloud2::ConstPtr scan_msg =
               m.instantiate<sensor_msgs::PointCloud2>();
           timestamp = scan_msg->header.stamp.toSec();
           vlp_point_convert_->get_organized_and_raw_cloud(scan_msg,
                                                           lidar_feature);
-        }  //
+        }
+        else if (lidar_model_ == HESAI_XT32) {
+            sensor_msgs::PointCloud2::ConstPtr scan_msg =
+                    m.instantiate<sensor_msgs::PointCloud2>();
+            timestamp = scan_msg->header.stamp.toSec();
+            hesai_convert_->get_organized_and_raw_cloud(scan_msg,
+                                                        lidar_feature);
+        }
         else if (lidar_model_ == Ouster) {
           sensor_msgs::PointCloud2::ConstPtr scan_msg =
               m.instantiate<sensor_msgs::PointCloud2>();
@@ -408,6 +425,7 @@ class LioDataset {
   VelodynePoints::Ptr vlp_point_convert_;
   OusterLiDAR::Ptr ouster_convert_;
   RobosenseCorrection::Ptr p_robosense_convert_;
+  HesaiLiDAR::Ptr hesai_convert_;
 
   LidarModelType lidar_model_;
 };
