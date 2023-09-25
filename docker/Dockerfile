@@ -70,6 +70,8 @@ WORKDIR /root/catkin_oa_calib
 RUN bash -c "source /opt/ros/melodic/setup.bash && catkin_make -DCATKIN_WHITELIST_PACKAGES=\"ndt_omp\""
 RUN bash -c "source /opt/ros/melodic/setup.bash && catkin_make"
 
+RUN bash -c "rm -rf /root/catkin_oa_calib/src/OA-LICalib"
+
 RUN bash -c "echo 'source /opt/ros/melodic/setup.bash' >> ~/.bashrc"
 RUN bash -c "echo 'alias sors=\"source devel/setup.bash\"' >> ~/.bashrc"
 

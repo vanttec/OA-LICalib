@@ -2,60 +2,32 @@
 
 **OA-LICalib** is a versatile and highly repeatable calibration method for the LiDAR-inertial system within a continuous-time batch-optimization framework, where the intrinsics of both sensors and the spatial-temporal extrinsics between sensors are calibrated comprehensively without explicit hand-crafted targets. To improve efficiency and cope with challenges from degenerate motions, we introduce two dedicated modules to enable observability-aware calibration. Firstly, a data selection policy based on the information-theoretic metric selects informative segments for calibration in unconscious data collection process. Secondly, an observability-aware state update mechanism in the back-end optimization is introduced to update only the identifiable directions of the calibrated parameters by leveraging truncated singular value decomposition. In this way, the proposed method can get accurate calibration results even under degenerate cases where informative enough data segments do not exist. Extensive evaluations by both simulated and real-world experiments are carried out. The results demonstrate the high accuracy and repeatability of the proposed method in common human-made scenarios and various robot platforms.
 
-## Recomended Usage
-Install [Dcoker](https://docs.docker.com/engine/install/ubuntu/) first.
-
-Build docker image:
-
-```
-cd docker
-docker build -t oa_licalib .
-```
-
-Run docker image:
-
-```
-docker run -it --rm --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" oa_licalib bash
-```
-
 ## Prerequisites
 
-- [ROS](http://wiki.ros.org/ROS/Installation) (tested with Melodic)
+- To use this tool, install Docker in your computer with [this](https://docs.docker.com/engine/install/) link. Make sure you follow the [post-installation](https://docs.docker.com/engine/install/linux-postinstall/) steps.
 
-- Others (Sophus, ceres, Pangolin have been included in the gitsubmodule)
 
-  ```shell
-  sudo apt-get install ros-melodic-velodyne-msgs
-  sudo apt-get install libpcap-dev
-  sudo apt-get install ccache
-  sudo apt-get install libyaml-cpp-dev 
-  ```
+## Install & Run
 
-## Install
+```shell
+# clone the project repo.
+git clone https://github.com/leo-drive/OA-LICalib
 
-```
-# init ROS workspace
-mkdir -p ~/catkin_oa_calib/src
-cd ~/catkin_oa_calib/src
-catkin_init_workspace
+# Build docker image
+cd OA-LICalib/docker
+docker image build -t calib:v1 .
 
-# Clone the source code for the project and build it. 
-git clone https://github.com/APRIL-ZJU/OA-LICalib.git
+# Create container from docker image
+# define env. var. with your local repo. path
+export REPO_PATH="/home/bzeren/projects/OA-LICalib/"
+docker run -it --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --volume="$REPO_PATH:/root/calib_ws/src/OA-LICalib" calib:v1 bash
 
-# ndt_omp, ros_rslidar
-wstool init
-wstool merge OA-LICalib/depend_pack.rosinstall
-wstool update
-
-# thirdparty
-cd OA-LICalib
-./build_submodules.sh
-
-## build
-cd ../..
-catkin_make -DCATKIN_WHITELIST_PACKAGES="ndt_omp"
+cd catkin_oa_calib/
 catkin_make -DCATKIN_WHITELIST_PACKAGES=""
+
+# install your environment and launch calibration tool
 source ./devel/setup.bash
+roslaunch oa_licalib li_calib.launch
 ```
 
 ## Intrinsic and Extrinsic Calibration
@@ -77,16 +49,26 @@ Check the  parameter `path_bag` in the `config/simu.yaml`, **change it to your a
 roslaunch oa_licalib li_calib.launch
 ```
 
-After completing calibration, run the following script to check the calibration result.
+## Data Collection
 
-```python
-cd script
-python plot_lidar_intrinsic_data.py
-```
+OA-LICalib works with rosbag files which contains `sensor_msgs/PointCloud2` and `sensor_msgs/Imu` topics. Also you can collect `nav_msgs/NavSatFix` or `nav_msgs/Odometry` to visualize your calibration results on Rviz.
 
-## Observability-Aware Calibration
+The calibration accuracy is affected by the data collection environment. You should collect your data in a place that contains a lot of flat surfaces, and indoor spaces are the best locations under these conditions. However, you can also achieve good results outdoors. When collecting data, make sure to draw figures of eights and grids, capturing data from every angle
 
-The code of observability-awared module and the simulator would be released in the near future.
+## Parameter Tuning
+
+To achieve the best calibration results, you should tune the parameters in the `config/simu.yaml` file. The parameters are as follows:
+
+| Parameter                           | Value                                                     |
+|-------------------------------------|-----------------------------------------------------------|
+| ndtResolution | Resolution of NDT grid structure (VoxelGridCovariance)<br/>0,5 for indoor case and 1.0 for outdoor case | 
+| ndt_key_frame_downsample    | Resolutation parameter for voxel grid downsample function |
+| map_downsample_size       | Resolutation parameter for voxel grid downsample function |
+| knot_distance            | time interval |
+| plane_motion       | set true if you collect data from vehicle |
+| gyro_weight       | gyrometer sensor output’s weight for trajectory estimation |
+| accel_weight       | accelerometer sensor output’s weight for trajectory estimation |
+| lidar_weight       | lidar sensor output’s weight for trajectory estimation |
 
 ## Credits
 
