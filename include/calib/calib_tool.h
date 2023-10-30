@@ -216,28 +216,28 @@ inline bool EstimateRotation(const Eigen::aligned_vector<IMUData>& imu_data,
   LidarNdtOdometry lidar_odom(calib_param->lo_param.ndt_resolution,
                               calib_param->lo_param.ndt_key_frame_downsample);
 
-//  InertialInitializer rot_initer;
-//  for (auto const& scan_raw : scan_data) {
-//      std::cout << "scan_raw.timestamp: " << scan_raw.timestamp << std::endl;
-//    lidar_odom.FeedScan(scan_raw);
-//    if (lidar_odom.get_odom_data().size() < 20 ||
-//        (lidar_odom.get_odom_data().size() % 5 != 0))
-//      continue;
-//
-//    bool ret;
-//    ret = rot_initer.EstimateRotation(trajectory, lidar_odom.get_odom_data());
-//
-//    if (ret) {
-//      Eigen::Quaterniond qItoL = rot_initer.getQ_ItoS();
-//      calib_param->so3_LtoI.setQuaternion(qItoL.conjugate());
-//      calib_param->UpdateExtrinicParam();
-//      Eigen::Vector3d euler_ItoL =
-//          qItoL.toRotationMatrix().eulerAngles(0, 1, 2);
-//      std::cout << "[Initialization] Done. Euler_ItoL initial degree: "
-//                << (euler_ItoL * 180.0 / M_PI).transpose() << std::endl;
-//      return true;
-//    }
-//  }
+ InertialInitializer rot_initer;
+ for (auto const& scan_raw : scan_data) {
+     std::cout << "scan_raw.timestamp: " << scan_raw.timestamp << std::endl;
+   lidar_odom.FeedScan(scan_raw);
+   if (lidar_odom.get_odom_data().size() < 20 ||
+       (lidar_odom.get_odom_data().size() % 5 != 0))
+     continue;
+
+   bool ret;
+   ret = rot_initer.EstimateRotation(trajectory, lidar_odom.get_odom_data());
+
+   if (ret) {
+     Eigen::Quaterniond qItoL = rot_initer.getQ_ItoS();
+     calib_param->so3_LtoI.setQuaternion(qItoL.conjugate());
+     calib_param->UpdateExtrinicParam();
+     Eigen::Vector3d euler_ItoL =
+         qItoL.toRotationMatrix().eulerAngles(0, 1, 2);
+     std::cout << "[Initialization] Done. Euler_ItoL initial degree: "
+               << (euler_ItoL * 180.0 / M_PI).transpose() << std::endl;
+     return true;
+   }
+ }
 
   return false;
 }

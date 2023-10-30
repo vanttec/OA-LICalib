@@ -20,7 +20,8 @@ selected_segment:
   - {start_time: 0, end_time: 7, path_bag: /home/ha/catkin_oa_calib/src/OA-LICalib/data/bag/simu_bag.bag}
 
 
-# 平面运动时，旋转外参无法初始化
+# If you select false, it calculate initial rotations.
+# If you know the approximate conversion between the sensors, set true.
 plane_motion: false
 
 # optimization weight
