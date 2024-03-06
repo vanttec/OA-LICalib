@@ -40,6 +40,7 @@ enum VelodyneType {
   VLP16 = 0,
   VLP32E = 1,
   VLS128 = 2,
+  HDL_32E = 3
 };
 
 class VelodynePoints {
@@ -60,6 +61,9 @@ class VelodynePoints {
     } else if (VLS128  == vlp_type) {
         num_lasers_ = 128;
         num_firing_ = 384;  // 32*12
+    } else if (HDL_32E == vlp_type) {
+      num_lasers_ = 32;
+      num_firing_ = 704; // 22 * 32
     }
     horizon_resolution_ = one_scan_angle_ / (double)num_firing_;
 

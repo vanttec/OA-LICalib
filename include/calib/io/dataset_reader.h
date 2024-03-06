@@ -116,8 +116,11 @@ class LioDataset {
       velodyne16_convert_ = std::make_shared<Velodyne16>();
       std::cout << "LiDAR model set as VLP_16." << std::endl;
     }  //
-    else if (lidar_model_ == VLP_16_points || lidar_model_ == VLP_32E_points) {
+    else if (lidar_model_ == VLP_16_points || lidar_model_ == VLP_32E_points || lidar_model_ == HDL_32E_points) {
       VelodyneType vlp_type = (lidar_model_ == VLP_16_points) ? VLP16 : VLP32E;
+      if(lidar_model_ == HDL_32E_points){
+        vlp_type = HDL_32E;
+      }
       vlp_point_convert_ = std::make_shared<VelodynePoints>(vlp_type);
       std::cout << "LiDAR model set as velodyne_points." << std::endl;
     }
@@ -221,7 +224,7 @@ class LioDataset {
           velodyne16_convert_->unpack_scan(scan_msg, lidar_feature);
         }  //
         else if (lidar_model_ == VLP_16_points ||
-                 lidar_model_ == VLP_32E_points || lidar_model_ == VLS_128_points) {
+                 lidar_model_ == VLP_32E_points || lidar_model_ == VLS_128_points || lidar_model_ == HDL_32E_points) {
           sensor_msgs::PointCloud2::ConstPtr scan_msg =
               m.instantiate<sensor_msgs::PointCloud2>();
           timestamp = scan_msg->header.stamp.toSec();

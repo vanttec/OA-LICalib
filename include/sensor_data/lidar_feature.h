@@ -35,6 +35,7 @@ enum LidarModelType {
   VLP_16_points,
   VLP_32E_points,
   VLS_128_points,
+  HDL_32E_points,
   Ouster,
   Ouster_16_points,
   Ouster_32_points,

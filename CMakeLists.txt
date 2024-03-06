@@ -115,6 +115,10 @@ list(APPEND thirdparty_libraries
         ceres
 )
 
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  PATTERN ".svn" EXCLUDE)
+
 ################ Library #######################
 add_library(lib_calib 
   src/trajectory/se3_trajectory.cpp
