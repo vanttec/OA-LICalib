@@ -1,12 +1,12 @@
 # bag
 topic_lidar: /velodyne_points # /velodyne_packets #
-topic_imu: /imu
+topic_imu: /vectornav/imu
 
 LidarModel: HDL_32E_points
 vlp16_ring_case: 0
 
 scan4map: 15.0
-ndtResolution: 0.5 # 0.5 for indoor case and 1.0 for outdoor case
+ndtResolution: 1.0 # 0.5 for indoor case and 1.0 for outdoor case
 ndt_key_frame_downsample: 0.1
 map_downsample_size: 0.25
 
@@ -17,7 +17,7 @@ use_gui: false
 # 当 segment_num = 1时，即用一段数据标定
 segment_num: 1
 selected_segment:
-  - {start_time: 100, end_time: 150, path_bag: /workspace/bags/calibration_bag.bag}
+  - {start_time: 280, end_time: 307, path_bag: /workspace/bags/vectornav_dia_2/dia_2.bag}
 
 
 # If you select false, it calculate initial rotations.
@@ -25,30 +25,32 @@ selected_segment:
 plane_motion: true
 
 # optimization weight
-gyro_weight: 2.80
-accel_weight: 1.85
+gyro_weight: 1.40
+accel_weight: 0.9
 lidar_weight: 1.0
 
 lock_accel_bias: false
 
-opt_timeoffset: true
+opt_timeoffset: false
 timeoffset_padding: 0.01
 
-opt_lidar_intrinsic: true
+opt_lidar_intrinsic: false
 opt_IMU_intrinsic: true
 
 iteration_num: 14
 
 # For CalibParamManager
 extrinsic:
-  Trans: [0.25, 0.13, 0.07]
-  Trans_prior: [0.25, 0.13, 0.07]
+  Trans: [-0.19, 0.0, 0.0]
+  Trans_prior: [-0.19, 0.0, 0.0]
 
-  Rot: [1, 0, 0,
+  # from scipy.spatial.transform import Rotation as R
+  # R.from_euler('y', -10, degrees=True).as_matrix
+  Rot: [0.984, 0, -0.173,
        0, 1, 0,
-       0, 0, 1]
+       0.173, 0, 0.984]
 
-  # Trans: [0.3, 0.15, 0.05]
+  # Trans: [0.3, 0.15, 0.05] 
 
   # gt [1, 2, 5]deg
   # Rot: [  0.995588, -0.0871026,  0.0348995,
